@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package grant;
+
+option go_package = "github.com/MahikaJaguste/grant-management-system/proto/grant";
+
+service GrantService {
+  rpc CreateGrant (GrantRequest) returns (GrantResponse);
+}
+
+message GrantRequest {
+  string professor_id = 1;
+  string title = 2;
+  string description = 3;
+  double requested_funding = 4;
+}
+
+message GrantResponse {
+  string grant_id = 1;
+  string status = 2;
+}
