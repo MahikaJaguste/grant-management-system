@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v3.20.3
-// source: proto/grant.proto
+// source: grant/grant.proto
 
 package grant
 
@@ -117,5 +117,5 @@ var GrantService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/grant.proto",
+	Metadata: "grant/grant.proto",
 }
