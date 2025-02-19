@@ -4,8 +4,15 @@ package grant;
 
 option go_package = "github.com/MahikaJaguste/grant-management-system/proto/grant";
 
+import "google/api/annotations.proto";
+
 service GrantService {
-  rpc CreateGrant (GrantRequest) returns (GrantResponse);
+  rpc CreateGrant (GrantRequest) returns (GrantResponse) {
+    option (google.api.http) = {
+      post: "/v1/grants"
+      body: "*"
+    };
+  }
 }
 
 message GrantRequest {
