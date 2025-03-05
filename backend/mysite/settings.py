@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import environ
+import os
+
+env = environ.Env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,13 +24,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure--#9qrm6r+0*)ie*4#&#y9!s=x_j320-p@+3_(x$&q&qumawjmi"
+SECRET_KEY = env.get_value('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool('DEBUG', default=False)
 
 
-ALLOWED_HOSTS=['*']
+ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS')
 CORS_ORIGIN_ALLOW_ALL = True
 
 
@@ -40,7 +44,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'corsheaders',
+    "celery",
     "grants",
+    "notifications",
 ]
 
 MIDDLEWARE = [
@@ -80,12 +86,12 @@ WSGI_APPLICATION = "mysite.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "grants_db",
-        "USER": "root",
-        "PASSWORD": "password@123",
-        "HOST": "127.0.0.1",
-        "PORT": 3306
+        "ENGINE": env.str('DATABASE_ENGINE'),
+        "NAME":  env.str('DATABASE_NAME'),
+        "USER":  env.str('DATABASE_USER'),
+        "PASSWORD":  env.str('DATABASE_USER_PASSWORD'),
+        "HOST": env.str('DATABASE_HOST'),
+        "PORT": env.int('DATABASE_PORT'),
     }
 }
 
@@ -125,10 +131,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-
+CELERY_BROKER_URL = env.str('CELERY_BROKER_URL'),  # RabbitMQ default URL

@@ -6,6 +6,6 @@ export const reviewApplication = async ({ id, status }) => {
 };
 
 export const fetchCommitteeNotifications = async () => {
-  const response = await axiosInstance.get("/notifications/committee");
-  return response?.data;
+  const response = await axiosInstance.get("/notifications/reviewer");
+  return response?.data?.notifications;
 }

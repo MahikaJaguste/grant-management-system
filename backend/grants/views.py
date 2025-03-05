@@ -2,6 +2,7 @@ from django.http import JsonResponse
 import json
 from .models import GrantApplication, GrantApplicationStatusEnum
 from django.forms.models import model_to_dict
+from .tasks import handle_grant_application_submission, handle_grant_application_review
 
 def submit(request):
     if request.method == "POST":
@@ -9,8 +10,8 @@ def submit(request):
         title = body.get("title")
         description = body.get("description")
         fund_requested = float(body.get("fundRequested"))
-        print(title, description, fund_requested)
         grantApplication = GrantApplication.objects.create(title=title, description=description, fund_requested=fund_requested)
+        handle_grant_application_submission.delay(grantApplication.id)
         return JsonResponse({
             "status": "SUCCESS",
             "grant": model_to_dict(grantApplication)
@@ -26,9 +27,9 @@ def list(request):
         filter_status = request.GET.getlist("status[]")
         grants = []
         if len(filter_status) == 0:
-            grants = GrantApplication.objects.all()
+            grants = GrantApplication.objects.all().order_by("-id")
         else:
-            grants = GrantApplication.objects.filter(status__in=filter_status)
+            grants = GrantApplication.objects.filter(status__in=filter_status).order_by("-id")
         return JsonResponse({"grants": [model_to_dict(grant) for grant in grants]})
     return JsonResponse({
         "status": "ERROR",
@@ -52,6 +53,7 @@ def review(request, id):
             })
         grant.status = new_status
         grant.save()
+        handle_grant_application_review.delay(grant.id)
         return JsonResponse({
             "status": "SUCCESS",
             "grant": model_to_dict(grant)

@@ -1,0 +1,63 @@
+version: '3'
+services:
+  db:
+    image: mysql:8.0.40
+    container_name: grants_management_db
+    restart: always
+    volumes:
+      - data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_NAME}
+      MYSQL_USER: ${DATABASE_USER}
+      MYSQL_PASSWORD: ${DATABASE_USER_PASSWORD}
+      MYSQL_TCP_PORT: ${DATABASE_PORT}
+    ports:
+      - '3306:${DATABASE_PORT}'
+    healthcheck:
+      test: ["CMD", "mysql", "-h", "localhost", "-u", "root", "-p${DATABASE_ROOT_PASSWORD}", "-e", "SELECT 1"]
+      timeout: 20s
+      retries: 10
+ 
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: grants_management_backend
+    command: sh -c "export ENV=${ENVIRONMENT} && python3 manage.py makemigrations && python3 manage.py migrate --noinput && python3 manage.py collectstatic --noinput && python3 manage.py runserver 0.0.0.0:8000"
+    restart: always
+    volumes:
+      - .:/app
+    ports:
+      - '8000:8000'
+    depends_on:
+      - db
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: grants_management_rabbitmq
+    restart: always
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+ 
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: grants_management_celery
+    command: sh -c "export ENV=${ENVIRONMENT} && celery -A config worker --loglevel=info"
+    environment:
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+    depends_on:
+      - backend
+      - rabbitmq
+    volumes:
+      - .:/app
+ 
+
+volumes:
+  data:
