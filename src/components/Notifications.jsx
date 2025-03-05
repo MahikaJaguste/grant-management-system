@@ -9,7 +9,11 @@ const Notifications = ({ notificationLoader }) => {
       <ul>
         {isLoading && <p>Loading notifications...</p>}
         {notifications && notifications.map((notification, index) => (
-          <li key={index}>{notification.message}</li>
+          <li key={index}>
+            {notification.title} 
+            <br />
+            {notification.description}
+        </li>
         ))}
       </ul>
     </div>
