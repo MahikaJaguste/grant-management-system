@@ -12,5 +12,5 @@ export const submitApplication = async (applicationData) => {
 
 export const fetchProfessorNotifications = async () => {
   const response = await axiosInstance.get("/notifications/professor");
-  return response?.data;
+  return response?.data?.notifications;
 }
