@@ -49,7 +49,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: grants_management_celery
-    command: sh -c "export ENV=${ENVIRONMENT} && celery -A config worker --loglevel=info"
+    command: sh -c "export ENV=${ENVIRONMENT} && celery -A mysite worker --loglevel=info"
     environment:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL}
     depends_on:
