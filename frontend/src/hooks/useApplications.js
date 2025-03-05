@@ -1,6 +1,5 @@
-
 import { useQuery, useQueryClient, useMutation } from "react-query";
-import { submitApplication, fetchApplications } from "../api/applicationService";
+import { submitApplication, fetchApplications, fetchProfessorNotifications } from "../api/applicationService";
 
 
 export const useApplications = () => {
@@ -14,4 +13,8 @@ export const useSubmitApplication = () => {
         queryClient.invalidateQueries("applications");
         },
     });
+};
+
+export const useProfessorNotifications = () => {
+  return useQuery("professorNotifications", fetchProfessorNotifications);
 };

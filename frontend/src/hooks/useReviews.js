@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient, useMutation } from "react-query";
-import { reviewApplication } from "../api/reviewService";
+import { fetchCommitteeNotifications, reviewApplication } from "../api/reviewService";
 import { fetchApplications } from "../api/applicationService";
 
 export const ApplicationStatusEnum = {
@@ -24,4 +24,8 @@ export const useReviewApplication = () => {
       queryClient.invalidateQueries("reviewedApplications");
     },
   });
+};
+
+export const useCommitteeNotifications = () => {
+  return useQuery("committeeNotifications", fetchCommitteeNotifications);
 };
