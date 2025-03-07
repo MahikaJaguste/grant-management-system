@@ -9,7 +9,7 @@ const queryClient = new QueryClient();
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router basename="/grant-management-system">
+      <Router basename="https://mahikajaguste.github.io/grant-management-system">
         <Routes>
           <Route path="/" element={<Homepage />} />
           <Route path="/professor" element={<ProfessorDashboard />} />
