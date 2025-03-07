@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "private": true,
+  "private": false,
   "version": "0.0.0",
   "homepage": "https://mahikajaguste.github.io/grant-management-system",
   "type": "module",
