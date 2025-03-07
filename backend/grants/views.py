@@ -8,9 +8,37 @@ def submit(request):
     if request.method == "POST":
         body = json.loads(request.body)
         title = body.get("title")
-        description = body.get("description")
-        fund_requested = float(body.get("fundRequested"))
-        grantApplication = GrantApplication.objects.create(title=title, description=description, fund_requested=fund_requested)
+        abstract = body.get("abstract")
+        objectives = body.get("objectives")
+        research_question = body.get("researchQuestion")
+        background = body.get("background")
+        plan = body.get("plan")
+        dissemination = body.get("dissemination")
+        cv = body.get("cv")
+        budget = body.get("budget")
+        budget_justification = body.get("budgetJustification")
+        non_academic_dissemination = body.get("nonAcademicDissemination")
+        project_management = body.get("projectManagement")
+        appendices = body.get("appendices")
+        ethics = body.get("ethics")
+        data_management_plan = body.get("dataManagementPlan")
+        grantApplication = GrantApplication.objects.create(
+            title=title,
+            abstract=abstract,
+            objectives=objectives,
+            research_question=research_question,
+            background=background,
+            plan=plan,
+            dissemination=dissemination,
+            cv=cv,
+            budget=budget,
+            budget_justification=budget_justification,
+            non_academic_dissemination=non_academic_dissemination,
+            project_management=project_management,
+            appendices=appendices,
+            ethics=ethics,
+            data_management_plan=data_management_plan,
+        )
         handle_grant_application_submission.delay(grantApplication.id)
         return JsonResponse({
             "status": "SUCCESS",

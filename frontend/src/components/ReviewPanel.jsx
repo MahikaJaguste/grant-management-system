@@ -1,17 +1,29 @@
+import { useState } from "react";
 import { usePendingApplications, useReviewApplication, ApplicationStatusEnum } from "../hooks/useReviews";
+import ApplicationDetails from "./ApplicationDetails";
 
+const ReviewPanel = () => {
+  const { data: pendingApplications, isLoading: isLoadingPending } = usePendingApplications();
+  const { mutate: reviewApplication } = useReviewApplication();
+  const [selectedApplication, setSelectedApplication] = useState(null);
+  const [showDetails, setShowDetails] = useState(false);
 
-const ApplicationList = ({ applicationLoader }) => {
+  const handleUpdateStatus = (id, status) => {
+    reviewApplication({ id, status });
+  };
 
-    const { data: pendingApplications, isLoading: isLoadingPending } = usePendingApplications();
-    const { mutate: reviewApplication } = useReviewApplication();
-  
-    const handleUpdateStatus = (id, status) => {
-      reviewApplication({ id, status });
-    };
+  const handleViewDetails = (application) => {
+    setSelectedApplication(application);
+    setShowDetails(true);
+  };
 
-    return (
-      <div className="container mt-4">
+  const handleCloseDetails = () => {
+    setShowDetails(false);
+    setSelectedApplication(null);
+  };
+
+  return (
+    <div className="container mt-4">
       <h3>Pending Applications</h3>
       {isLoadingPending ? (
         <p>Loading pending applications...</p>
@@ -21,8 +33,8 @@ const ApplicationList = ({ applicationLoader }) => {
             <tr>
               <th>ID</th>
               <th>Title</th>
-              <th>Description</th>
-              <th>Fund Requested</th>
+              <th>Abstract</th>
+              <th>View</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -31,8 +43,14 @@ const ApplicationList = ({ applicationLoader }) => {
               <tr key={app.id}>
                 <td>{app.id}</td>
                 <td>{app.title}</td>
-                <td>{app.description}</td>
-                <td>{app.fund_requested}</td>
+                <td>{app.abstract}</td>
+                <td>
+                  <button onClick={() => handleViewDetails(app)}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-right-circle-fill" viewBox="0 0 16 16">
+                      <path d="M0 8a8 8 0 1 0 16 0A8 8 0 0 0 0 8m5.904 2.803a.5.5 0 1 1-.707-.707L9.293 6H6.525a.5.5 0 1 1 0-1H10.5a.5.5 0 0 1 .5.5v3.975a.5.5 0 0 1-1 0V6.707z"/>
+                    </svg>
+                  </button>
+                </td>
                 <td>
                   <button onClick={() => handleUpdateStatus(app.id, ApplicationStatusEnum.APPROVED)}>Approve</button>
                   <button onClick={() => handleUpdateStatus(app.id, ApplicationStatusEnum.REJECTED)}>Reject</button>
@@ -42,8 +60,9 @@ const ApplicationList = ({ applicationLoader }) => {
           </tbody>
         </table>
       )}
+      <ApplicationDetails show={showDetails} handleClose={handleCloseDetails} application={selectedApplication} />
     </div>
-    );
+  );
 };
 
-export default ApplicationList;
+export default ReviewPanel;
