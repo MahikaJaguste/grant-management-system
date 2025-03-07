@@ -7,4 +7,6 @@ const instance = axios.create({
     },
 });
 
+export const STATIC_FLAG = true;
+
 export default instance;
